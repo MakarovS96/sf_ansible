@@ -1,0 +1,6 @@
+---
+- name: Setup vsftpd
+  hosts: test
+  become: true
+  roles:
+    - role: 'roles/vsftpd'

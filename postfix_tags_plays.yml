@@ -1,0 +1,32 @@
+---
+- name: Postfix Init/Drop by tags
+  hosts: test
+  become: true
+  tasks:
+    - name: Install Postfix
+      ansible.builtin.apt:
+        name: postfix
+        state: present
+      tags:
+        - init postfix
+
+    - name: Run postfix
+      ansible.builtin.service:
+        name: postfix
+        state: started
+      tags:
+        - init postfix
+
+    - name: Stop postfix
+      ansible.builtin.service:
+        name: postfix
+        state: stopped
+      tags:
+        - drop postfix
+
+    - name: Remove postfix
+      ansible.builtin.apt:
+        name: postfix
+        state: absent
+      tags:
+        - drop postfix

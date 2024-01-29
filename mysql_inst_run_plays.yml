@@ -1,0 +1,17 @@
+---
+- name: Install and run MySQL server
+  hosts: test
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install MySQL
+      ansible.builtin.apt:
+        name: mysql-server
+        state: present
+        update_cache: true
+
+    - name: Run MySQL
+      ansible.builtin.service:
+        name: mysql
+        enabled: true
+        state: started

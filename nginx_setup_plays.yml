@@ -1,0 +1,29 @@
+---
+- name: Install, run and setup nginx
+  hosts: test
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Install nginx and ufw
+      ansible.builtin.apt:
+        name: [ufw, nginx]
+        state: present
+        update_cache: true
+
+    - name: Set up ufw
+      community.general.ufw:
+        name: 'Nginx HTTP'
+        rule: 'allow'
+
+    - name: Run nginx
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: started
+
+    - name: Generate template
+      ansible.builtin.template:
+        dest: '/var/www/html/index.html'
+        src: 'nginx.j2'
+        backup: true
+        mode: '644'

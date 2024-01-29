@@ -1,0 +1,34 @@
+---
+- name: Create user and set ssh key to it
+  hosts: test
+  become: true
+  vars:
+    username: user1
+  tasks:
+    - name: Create user
+      ansible.builtin.user:
+        name: "{{ username }}"
+        create_home: true
+        group: sudo
+        state: present
+        shell: /bin/bash
+
+    - name: Check directory
+      ansible.builtin.file:
+        path: "/home/{{ username }}/.ssh"
+        state: directory
+        owner: "{{ username }}"
+        mode: '700'
+
+    - name: Copy ssh key to user
+      ansible.builtin.copy:
+        src: vault/ssh_key.pub
+        dest: "/home/{{ username }}/.ssh/id_rsa.pub"
+        mode: '700'
+        owner: "{{ username }}"
+
+    - name: Set key to authorized keys
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: '{{ lookup("file", "vault/ssh_key.pub") }}'
